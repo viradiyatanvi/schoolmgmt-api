@@ -1,8 +1,13 @@
 const Admin=require('../../../models/AdminModels');
 
+const Faculty=require('../../../models/FacultyModel');
+
 const bcrypt=require('bcrypt');
 
 const jwt=require('jsonwebtoken');
+
+const nodemailer = require('nodemailer');
+const passport = require('passport');
 
 module.exports.adminregister=async(req,res)=>{
     try{
@@ -40,7 +45,7 @@ module.exports.adminLogin=async(req,res)=>{
             if(checkpassword){
                 checkemail=checkemail.toObject();
                 delete checkemail.password; 
-                // console.log("delete",checkemail);
+                console.log("delete",checkemail);
                 let admintoken=await jwt.sign({admindata:checkemail},"RNW",{expiresIn:1000*60*60});
                 if(admintoken){
                     return res.status(200).json({msg:"data added successfully",admintoken:admintoken});
@@ -141,4 +146,138 @@ module.exports.adminlogout=async(req,res)=>{
     catch(err){
         return res.status(400).json({msg:"something is wrong",errors:err});
     }
+}
+
+module.exports.checkemail=async(req,res)=>{
+    try{
+        let checkemail=await Admin.findOne({email:req.body.email});
+        if(checkemail){
+            const transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false, // true for port 465, false for other ports
+                auth: {
+                  user: "viradiyatanvi028@gmail.com",
+                  pass: "synjakrzfpluksse",
+                },
+                tls:{
+                    rejectUnauthorized:false
+                }
+              });
+
+              let otp=(Math.floor(Math.random()*10000))
+
+              const info = await transporter.sendMail({
+                from: 'viradiyatanvi028@gmail.com', // sender address
+                to: req.body.email, // list of receivers
+                subject: "your login details", // Subject line
+                html: `<b>OTP:${otp}</b>`, // html body
+              });
+
+              console.log("Message sent");
+
+              const data={
+                email:req.body,otp
+              }
+              if(info){
+                return res.status(200).json({msg:"otp send successfully",data:data});
+              }
+              else{
+                return res.status(200).json({msg:"otp not send",data:info});
+              }
+        }
+        else{
+            return res.status(200).json({msg:"invalid email",errors:err});
+        }
+    }
+    catch(err){
+        return res.status(400).json({msg:"something is wrong",errors:err});
+    }
+}
+
+module.exports.updatepassword=async(req,res)=>{
+    try{
+        let checkemail=await Admin.findOne({email:req.query.email});
+        if(checkemail){
+            if(req.body.newpassword==req.body.confirmpassword){
+                req.body.password=await bcrypt.hash(req.body.newpassword,10);
+                let updatepass=await Admin.findByIdAndUpdate(checkemail._id,req.body);
+                if(updatepass){
+                    return res.status(200).json({msg:"password change successfully",data:updatepass});
+                }
+                else{
+                    return res.status(400).json({msg:"password change successfully",errors:err});
+                }
+            }
+            else{
+                return res.status(200).json({msg:"newpassword and confirmpassword are not match"});
+            }
+        }
+        else{
+            return res.status(200).json({msg:"something is wrong"});
+        }
+    }
+    catch(err){
+        return res.status(400).json({msg:"something is wrong",errors:err});
+    }
+}
+
+module.exports.facultyregistration=async(req,res)=>{
+    try{
+        // console.log(req.body);
+        let existemail=await Admin.findOne({email:req.body.email});
+        if(!existemail){
+            var gpass=generatePassword();
+            var link="http://localhost:8000/api";
+
+            const transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false, // true for port 465, false for other ports
+                auth: {
+                  user: "viradiyatanvi028@gmail.com",
+                  pass: "synjakrzfpluksse",
+                },
+                tls:{
+                    rejectUnauthorized:false
+                }
+              });
+
+            const info = await transporter.sendMail({
+                from: 'viradiyatanvi028@gmail.com', // sender address
+                to: req.body.email, // list of receivers
+                subject: "your login details", // Subject line
+                html: `<h1>your login details</h1><p>email:${req.body.email}</p><p>password:${gpass}</p><p>for login click here:${link}</p>`, // html body
+              });
+
+            //   console.log("Message sent");
+
+              if(info){
+                let encrygpass=await bcrypt.hash(gpass,10);
+                let addfaculty=await Faculty.create({email:req.body.email,password:encrygpass,username:req.body.username});
+                if(addfaculty){
+                    return res.status(200).json({msg:"check your mail for login",data:addfaculty});
+                }
+                else{
+                    return res.status(200).json({msg:"faculty not registrater"});
+                }
+              }
+              else{
+                return res.status(200).json({msg:"email allready exist"});
+              }
+        }
+    }
+    catch(err){
+        return res.status(400).json({msg:"something is wrong",errors:err});
+    }
+}
+
+function generatePassword() {
+    var length = 8,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
 }

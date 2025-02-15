@@ -10,11 +10,27 @@ let opts={
 };
 
 const Admin=require('../models/AdminModels');
+const Faculty = require('../models/FacultyModel');
 
 passport.use(new JwtStrategy(opts,async(payload,done)=>{
     let checkemail=await Admin.findOne({email:payload.admindata.email});
     if(checkemail){
         return done(null,checkemail);
+    }
+    else{
+        return done(null,false);
+    }
+}));
+
+let facultyopts={
+    jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey :"FRNW",
+};
+
+passport.use('faculty', new JwtStrategy(facultyopts,async(payload,done)=>{
+    let checkfacultyemail=await Faculty.findOne({email:payload.ft.email});
+    if(checkfacultyemail){
+        return done(null,checkfacultyemail);
     }
     else{
         return done(null,false);

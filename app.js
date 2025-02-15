@@ -28,6 +28,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api',require('./routes/api/v1/adminroutes'));
+app.use('/api/faculty',require('./routes/api/v1/facultyRoutes'));
 
 app.listen(port,(err)=>{
     if(err){

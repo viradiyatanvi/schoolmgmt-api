@@ -25,6 +25,12 @@ routes.put('/admineditprofile/:id',passport.authenticate('jwt',{failureRedirect:
 
 routes.post('/changepassword',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.changepassword);
 
-routes.get('/adminlogout',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.adminlogout)
+routes.get('/adminlogout',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.adminlogout);
+
+routes.post('/checkemail',adminCtl.checkemail);
+
+routes.post('/updatepassword',adminCtl.updatepassword);
+
+routes.post('/facultyregistration',adminCtl.facultyregistration);
 
 module.exports=routes;

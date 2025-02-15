@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const AdminSchema=mongoose.Schema({
+const FacultySchema=mongoose.Schema({
     username:{
         type:String,
         required:true
@@ -21,6 +21,6 @@ const AdminSchema=mongoose.Schema({
     timestamps:true
 })
 
-const Admin=mongoose.model("Admin",AdminSchema);
+const Faculty=mongoose.model("Faculty",FacultySchema);
 
-module.exports=Admin;
+module.exports=Faculty;
