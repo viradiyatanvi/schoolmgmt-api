@@ -8,6 +8,7 @@ const jwt=require('jsonwebtoken');
 
 const nodemailer = require('nodemailer');
 const passport = require('passport');
+const Student = require('../../../models/StudentModels');
 
 module.exports.adminregister=async(req,res)=>{
     try{
@@ -280,4 +281,147 @@ function generatePassword() {
         retVal += charset.charAt(Math.floor(Math.random() * n));
     }
     return retVal;
+}
+
+module.exports.facultyviewall=async(req,res)=>{
+    try{
+        let search='';
+        if(req.query.search){
+            search=req.query.search
+        }
+
+        let page=0;
+        let per_page=2
+        if(req.query.page){
+            page=req.query.page
+        }
+        
+        let viewdata=await Faculty.find({status:true,
+            $or:[
+                {username:{$regex:search}},
+                {email:{$regex:search}}
+            ]
+        }).sort({username:-1}).skip(page*per_page).limit(per_page);
+
+        let totaldata=await Faculty.find({status:true,
+            $or:[
+                {username:{$regex:search}},
+                {email:{$regex:search}}
+            ]
+        }).countDocuments();
+
+        let totalpage=Math.ceil(totaldata/per_page);
+
+        let facultydatasfalse=await Faculty.find({status:false});
+
+        if(viewdata){
+            return res.status(200).json({msg:"faculty user show successfully",  data:viewdata,
+                page:page,
+                facultydatasfalse:facultydatasfalse,
+                totalpage:totalpage,
+                search:search
+            });
+        }
+        else{
+            return res.status(200).json({msg:"not faculty user show"});
+        }
+    }
+    catch(err){
+        return res.status(400).json({msg:"something is wrong",errors:err});
+    }
+}
+
+module.exports.studentviewall=async(req,res)=>{
+    try{
+
+        let search='';
+        if(req.query.search){
+            search=req.query.search
+        }
+
+        let page=0;
+        let per_page=2
+        if(req.query.page){
+            page=req.query.page
+        }
+
+        let viewdata=await Student.find({status:true,
+            $or:[
+                {username:{$regex:search}},
+                {email:{$regex:search}}
+            ]
+        }).sort({username:-1}).skip(page*per_page).limit(per_page);
+
+        let totaldata=await Student.find({status:true,
+            $or:[
+                {username:{$regex:search}},
+                {email:{$regex:search}}
+            ]
+        }).countDocuments();
+
+        let totalpage=Math.ceil(totaldata/per_page);
+
+        let studentdatasfalse=await Student.find({status:false});
+
+        if(viewdata){
+            return res.status(200).json({msg:"faculty user show successfully",
+                data:viewdata,
+                page:page,
+                studentdatasfalse:studentdatasfalse,
+                totalpage:totalpage,
+                search:search
+            });
+        }
+        else{
+            return res.status(200).json({msg:"not faculty user show"});
+        }
+    }
+    catch(err){
+        return res.status(400).json({msg:"something is wrong",errors:err});
+    }
+}
+
+module.exports.multipledelete = async (req, res) => {
+    try {
+        let deletedata=await Admin.deleteMany({_id:{$in:req.body.ids}});
+        if(deletedata){
+            return res.status(200).json({'msg':"data deleted successfully",data:deletedata});
+        }
+        else{
+            return res.status(400).json({'msg':"data not delete",error:err});
+        }
+    } catch (err) {
+        return res.status(400).json({ msg: "Something went wrong", error: err.message });
+    }
+};
+
+module.exports.statuschange=async(req,res)=>{
+    try{
+        let checkuser=await Admin.findById(req.query.userid);
+        if(checkuser){
+            if(req.query.userstatus == "true"){
+                let checkstatus=await User.findByIdAndUpdate(req.query.userid,{status:false});
+                if(checkstatus){
+                    return res.status(200).json({'msg':"status dactive update",data:checkstatus});
+                }
+                else{
+                    return res.status(400).json({'msg':"data not update",error:err});
+                }
+            }   
+            else{
+                if(req.query.userstatus){
+                    let checkstatus=await Admin.findByIdAndUpdate(req.query.userid,{status:true});
+                    if(checkstatus){
+                        return res.status(200).json({'msg':"status active update",data:checkstatus});
+                    }
+                    else{
+                        return res.status(400).json({'msg':"data not update",error:err});
+                    }
+                }
+            }
+        }
+    }
+    catch(err){
+        return res.status(400).json({'msg':"something is wrong",error:err});
+    }
 }

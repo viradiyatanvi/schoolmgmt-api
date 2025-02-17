@@ -29,4 +29,12 @@ routes.post('/checkfacultypassword',facultyCtl.checkfacultypassword);
 
 routes.get('/facultylogout',passport.authenticate('faculty',{failureRedirect:'/api/faculty/facultyfailertoken'}),facultyCtl.facultylogout);
 
+routes.post('/studentregistration',passport.authenticate('faculty',{failureRedirect:'/api/faculty/facultyfailertoken'}),facultyCtl.studentregistration);
+
+routes.get('/studentviewall',passport.authenticate('faculty',{failureRedirect:'/api/faculty/facultyfailertoken'}),facultyCtl.studentviewall);
+
+routes.post('/multipledelete',passport.authenticate('faculty',{failureRedirect:'/api/faculty/facultyfailertoken'}),facultyCtl.multipledelete);
+
+routes.get('/statuschange',passport.authenticate('faculty',{failureRedirect:'/api/faculty/facultyfailertoken'}),facultyCtl.statuschange);
+
 module.exports=routes

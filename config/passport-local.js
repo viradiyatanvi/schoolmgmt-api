@@ -11,6 +11,7 @@ let opts={
 
 const Admin=require('../models/AdminModels');
 const Faculty = require('../models/FacultyModel');
+const Student = require('../models/StudentModels');
 
 passport.use(new JwtStrategy(opts,async(payload,done)=>{
     let checkemail=await Admin.findOne({email:payload.admindata.email});
@@ -31,6 +32,22 @@ passport.use('faculty', new JwtStrategy(facultyopts,async(payload,done)=>{
     let checkfacultyemail=await Faculty.findOne({email:payload.ft.email});
     if(checkfacultyemail){
         return done(null,checkfacultyemail);
+    }
+    else{
+        return done(null,false);
+    }
+}));
+
+
+let studentopts={
+    jwtFromRequest:ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey :"SRNW",
+};
+
+passport.use('student', new JwtStrategy(studentopts,async(payload,done)=>{
+    let checkstudentemail=await Student.findOne({email:payload.studentdata.email});
+    if(checkstudentemail){
+        return done(null,checkstudentemail);
     }
     else{
         return done(null,false);

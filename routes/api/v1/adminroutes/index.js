@@ -27,10 +27,18 @@ routes.post('/changepassword',passport.authenticate('jwt',{failureRedirect:'/api
 
 routes.get('/adminlogout',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.adminlogout);
 
-routes.post('/checkemail',adminCtl.checkemail);
+routes.post('/checkemail',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.checkemail);
 
-routes.post('/updatepassword',adminCtl.updatepassword);
+routes.post('/updatepassword',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.updatepassword);
 
 routes.post('/facultyregistration',adminCtl.facultyregistration);
+
+routes.get('/facultyviewall',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.facultyviewall);
+
+routes.get('/studentviewall',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.studentviewall);
+
+routes.post('/multipledelete',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.multipledelete);
+
+routes.get('/statuschange',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.statuschange);
 
 module.exports=routes;
