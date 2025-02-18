@@ -39,6 +39,8 @@ routes.get('/studentviewall',passport.authenticate('jwt',{failureRedirect:'/api/
 
 routes.post('/multipledelete',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.multipledelete);
 
+routes.get('/statuschangefaculty',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.statuschangefaculty);
+
 routes.get('/statuschange',passport.authenticate('jwt',{failureRedirect:'/api/adminfailertoken'}),adminCtl.statuschange);
 
 module.exports=routes;

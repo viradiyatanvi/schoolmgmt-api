@@ -312,12 +312,43 @@ module.exports.multipledelete = async (req, res) => {
     }
 };
 
+// module.exports.statuschange=async(req,res)=>{
+//     try{
+//         let checkuser=await User.findById(req.query.userid);
+//         if(checkuser){
+//             if(req.query.userstatus == "true"){
+//                 let checkstatus=await Faculty.findByIdAndUpdate(req.query.userid,{status:false});
+//                 if(checkstatus){
+//                     return res.status(200).json({'msg':"status dactive update",data:checkstatus});
+//                 }
+//                 else{
+//                     return res.status(400).json({'msg':"data not update",error:err});
+//                 }
+//             }   
+//             else{
+//                 if(req.query.userstatus){
+//                     let checkstatus=await Faculty.findByIdAndUpdate(req.query.userid,{status:true});
+//                     if(checkstatus){
+//                         return res.status(200).json({'msg':"status active update",data:checkstatus});
+//                     }
+//                     else{
+//                         return res.status(400).json({'msg':"data not update",error:err});
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//     catch(err){
+//         return res.status(400).json({'msg':"something is wrong",error:err});
+//     }
+// }
+
 module.exports.statuschange=async(req,res)=>{
     try{
-        let checkuser=await User.findById(req.query.userid);
+        let checkuser=await Student.findById(req.query.userid);
         if(checkuser){
-            if(req.query.userstatus == "true"){
-                let checkstatus=await Faculty.findByIdAndUpdate(req.query.userid,{status:false});
+            if(req.query.status == "true"){
+                let checkstatus=await Student.findByIdAndUpdate(req.query.userid,{status:false});
                 if(checkstatus){
                     return res.status(200).json({'msg':"status dactive update",data:checkstatus});
                 }
@@ -326,8 +357,8 @@ module.exports.statuschange=async(req,res)=>{
                 }
             }   
             else{
-                if(req.query.userstatus){
-                    let checkstatus=await Faculty.findByIdAndUpdate(req.query.userid,{status:true});
+                if(req.query.status){
+                    let checkstatus=await Student.findByIdAndUpdate(req.query.userid,{status:true});
                     if(checkstatus){
                         return res.status(200).json({'msg':"status active update",data:checkstatus});
                     }

@@ -35,6 +35,8 @@ routes.get('/studentviewall',passport.authenticate('faculty',{failureRedirect:'/
 
 routes.post('/multipledelete',passport.authenticate('faculty',{failureRedirect:'/api/faculty/facultyfailertoken'}),facultyCtl.multipledelete);
 
+// routes.get('/statuschange',passport.authenticate('faculty',{failureRedirect:'/api/faculty/facultyfailertoken'}),facultyCtl.statuschange);
+
 routes.get('/statuschange',passport.authenticate('faculty',{failureRedirect:'/api/faculty/facultyfailertoken'}),facultyCtl.statuschange);
 
 module.exports=routes
